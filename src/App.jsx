@@ -9,6 +9,8 @@ import Collection from './pages/Collection'
 
 function App() {
 
+  
+
   return(
     <div>
       <NavBar />
