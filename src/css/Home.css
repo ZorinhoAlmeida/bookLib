@@ -1,0 +1,57 @@
+/* Home.css */
+
+/* Container principal da página Home */
+.home {
+  max-width: 1900px; /* largura máxima da página */
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  font-family: 'Arial', sans-serif;
+  background-color: #ffffff;
+}
+
+/* Título da página */
+.home h2 {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  color: #000000;
+  margin-top: 100px;
+}
+
+/* Input de busca */
+.search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.6rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  margin: 0 auto;
+  display: block;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Input de busca ao focar */
+.search-input:focus {
+  border-color: #ffb400;
+  box-shadow: 0 0 5px rgba(255, 180, 0, 0.5);
+}
+
+/* Grid de livros - específico da página Home */
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 3.5rem;
+  justify-items: center;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .book-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}

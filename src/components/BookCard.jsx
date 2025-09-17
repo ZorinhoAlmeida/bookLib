@@ -1,10 +1,19 @@
 
 import { useState } from "react";
+import "../css/BookCard.css"
+
+
+
 function BookCard({book}) {
 
 
     
 const [showList, setShowList] = useState(false);
+ const [rating, setRating] = useState(0);
+
+ const coverUrl = book.cover_id
+    ? `https://covers.openlibrary.org/b/id/${book.cover_id}-M.jpg`
+    : "https://via.placeholder.com/150x200?text=No+Cover";
 
   
 
@@ -12,7 +21,7 @@ const [showList, setShowList] = useState(false);
   return (
     <div className="book-card">
         <div className="book-Cover">
-            <img src="" alt="Capa do livro" />
+            <img src={coverUrl} alt={`Capa do livro ${book.title}`} />
         </div>
         <div className="book-info">
             <h3>{book.title}</h3>
@@ -34,14 +43,17 @@ const [showList, setShowList] = useState(false);
         </select>
       )}
     </div>
-        <fieldset className="book-rating">
-  <legend>Rating</legend>
-  {[1, 2, 3, 4, 5].map((n) => (
-    <label key={n}>
-      <input type="radio" name="rating" value={n} /> {n}⭐
-    </label>
-  ))}
-</fieldset>
+    <div className="book-rating">
+         {[1, 2, 3, 4, 5].map((star) => (
+          <span
+            key={star}
+            className={`fa fa-star ${star <= rating ? "checked" : ""}`}
+            onClick={() => setRating(star)}
+            style={{ cursor: "pointer", color: star <= rating ? "#ffb400" : "#ccc" }}
+          ></span>
+        ))}
+    </div>
+        
     </div>
   )
 }

@@ -1,0 +1,106 @@
+/* BookCard.css */
+
+/* Container individual do card */
+.book-card {
+  width: 200px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hover effect do BookCard */
+.book-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+/* Imagem da capa */
+.book-Cover img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* Informações do livro */
+.book-info h3 {
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.3rem;
+  color: #1e1e2f;
+}
+
+.book-info p {
+  font-size: 0.9rem;
+  color: #1e1e2f;
+  margin: 0.2rem 0;
+  text-align: center;
+}
+
+/* Botão Add to list */
+.book-category button {
+  padding: 0.3rem 0.6rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #1e1e2f;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+
+.book-category button:hover {
+  background-color: #b4c515;
+}
+
+/* Select de categorias */
+.category-list {
+  width: 100%;
+  padding: 0.3rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+}
+
+/* Rating */
+.book-rating {
+  width: 100%;
+  margin-top: 0.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.3rem;
+}
+
+.book-rating legend {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.book-rating input[type="radio"] {
+  margin-right: 0.2rem;
+}
+.checked {
+  color: orange;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .book-card {
+    width: 140px;
+    padding: 0.8rem;
+  }
+
+  .book-Cover img {
+    height: 200px;
+  }
+}

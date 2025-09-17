@@ -6,7 +6,7 @@ function Collection() {
     <div>
       <NavBarCategory />
       <h2>Minha Coleção de Livros</h2>
-      <p>Aqui você pode ver e gerenciar sua coleção de livros.</p>
+      <p>Aqui  podes ver e gerir a tua coleção</p>
     </div>
   );
 }

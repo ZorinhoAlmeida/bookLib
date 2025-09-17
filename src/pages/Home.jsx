@@ -1,47 +1,93 @@
-
 import BookCard from "../components/BookCard";
-import { useState,useEffect } from "react";
-
+import { useState, useEffect } from "react";
+import "../css/Home.css";
 
 function Home() {
-      const books = [
-    { id: 1, title: "The Hobbit", author: "J.R.R. Tolkien", release_date: "1937" },
-    { id: 2, title: "1984", author: "George Orwell", release_date: "1949" },
-    { id: 3, title: "To Kill a Mockingbird", author: "Harper Lee", release_date: "1960" },
-    { id: 4, title: "The Catcher in the Rye", author: "J.D. Salinger", release_date: "1951" }
-  ];
+  const [books, setBooks] = useState([]);
+  const [searchTerm, setSearchTerm] = useState([]);
+  const [defaultBooks, setDefaultBooks] = useState([]);
+  const [userCollection, setUserCollection] = useState({});
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (!searchTerm.trim()) {
-   
-    return;
+  // Fetch default books on mount
+  useEffect(() => {
+    async function fetchDefault() {
+      try {
+        const res = await fetch(
+          "https://openlibrary.org/search.json?q=harry+potter"
+        );
+        const data = await res.json();
+        const mappedBooks = data.docs.slice(0, 12).map((doc) => ({
+          id: doc.key,
+          title: doc.title,
+          author: doc.author_name?.[0] || "Unknown",
+          release_date: doc.first_publish_year || "N/A",
+          cover_id: doc.cover_i,
+        }));
+        setBooks(mappedBooks);
+        setDefaultBooks(mappedBooks); // save default books
+      } catch (err) {
+        console.error("Erro ao carregar livros iniciais:", err);
+      }
     }
-    console.log("Pesquisando por:", searchTerm);
-    
-  }
 
-  const [searchTerm, setSearchTerm] = useState("");
+    fetchDefault();
+  }, []);
+
+  // Live search
+  useEffect(() => {
+    if (searchTerm.length < 2) {
+      // show default books if input is empty or too short
+      setBooks(defaultBooks);
+      return;
+    }
+
+    const delayDebounce = setTimeout(() => {
+      fetchBooks(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm]);
+
+  const fetchBooks = async (query) => {
+    try {
+      const res = await fetch(
+        `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}`
+      );
+      const data = await res.json();
+      const mappedBooks = data.docs.slice(0, 12).map((doc) => ({
+        id: doc.key,
+        title: doc.title,
+        author: doc.author_name?.[0] || "Unknown",
+        release_date: doc.first_publish_year || "N/A",
+        cover_id: doc.cover_i,
+      }));
+      setBooks(mappedBooks);
+    } catch (err) {
+      console.error("Erro ao buscar livros:", err);
+    }
+  };
+
   return (
     <div className="home">
-      <h2>App Livros</h2>
-      <form onSubmit={handleSearch}>
-        <input type="text" placeholder="Pesquisar por Livros" className="search-input" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}/>
-        <button type="submit" className="search-button">Pesquisar</button>
-
-      </form>
-
+        <h2 >Bem-vindo à App de Livros</h2>
+      <input
+        type="text"
+        placeholder="Pesquisar por Livros"
+        className="search-input"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
 
       <div className="book-grid">
-        {books.map((book) =>
-         book.title.toLowerCase().startsWith(searchTerm.toLowerCase()) && (<BookCard book={book} key={book.id} />
-          
+        {books.map((book) => (
+          <BookCard 
+  book={book} 
+  onAddToCollection={(book, category) => addToCollection(book, category)}
+/>
         ))}
       </div>
-      
     </div>
-  )
+  );
 }
-
 
 export default Home;
