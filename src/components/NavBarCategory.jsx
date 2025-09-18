@@ -1,20 +1,25 @@
-import { Link } from "react-router-dom"
+import '../css/NavBarCategory.css';
 
 
 function NavBarCategory() {
+  const categories = ["Reading", "Read", "Dropped", "To read"];
+
+  const handleScroll = (category) => {
+    const element = document.getElementById(category.replace(/\s+/g, "-"));
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
-    <nav className="Navbar-category">
-        <div className="satus-category">
-            <Link to="/reading">Currently reading</Link>
-            <Link to="/read">Completed</Link>
-            <Link to="/dropped">Dropped</Link>
-            <Link to="/plan_to_read">Plan to Read</Link>
-        </div>
-
-
+    <nav className="nav-bar-category">
+      {categories.map((cat) => (
+        <button key={cat} onClick={() => handleScroll(cat)}>
+          {cat}
+        </button>
+      ))}
     </nav>
   );
 }
-
 
 export default NavBarCategory;

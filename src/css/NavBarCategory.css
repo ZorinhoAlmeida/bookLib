@@ -1,0 +1,25 @@
+.nav-bar-category {
+  position: sticky;
+  top: 0;
+  background: white;
+  padding: 10px;
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid #ddd;
+  z-index: 1000;
+ height: 50px;
+  
+}
+
+.nav-bar-category button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-weight: bold;
+  color: black;
+  margin-right: 210px;
+  
+  
+}
+
+

@@ -27,17 +27,39 @@ function Home() {
   }, [userCollection]);
 
   const addToCollection = (book, category) => {
-    setUserCollection((prev) => {
-      // Prevent duplicates
-      const alreadyAdded = prev[category].some((b) => b.id === book.id);
-      if (alreadyAdded) return prev;
+  setUserCollection((prev) => {
+    // verificar se já existe em alguma categoria
+    const alreadyInAny = Object.values(prev).some((arr) =>
+      arr.some((b) => b.id === book.id)
+    );
+    if (alreadyInAny) return prev;
 
-      return {
-        ...prev,
-        [category]: [...prev[category], book]
-      };
-    });
-  };
+    const bookWithMeta = { ...book, category, rating: 0 };
+
+    return {
+      ...prev,
+      [category]: [...prev[category], bookWithMeta],
+    };
+  });
+};
+const updateRating = (bookId, category, newRating) => {
+  if (!category) return; // se o livro não tem categoria ainda, não faz nada
+
+  setUserCollection((prev) => {
+    // caso a categoria não exista, inicializa como []
+    const updatedCategory = prev[category] ? prev[category].map((b) =>
+      b.id === bookId ? { ...b, rating: newRating } : b
+    ) : [];
+
+    return {
+      ...prev,
+      [category]: updatedCategory,
+    };
+  });
+};
+
+
+
 
   // Fetch default books on mount
   useEffect(() => {
@@ -106,16 +128,30 @@ function Home() {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
+<div className="book-grid">
+  {books.map((book) => {
+    // find if book already exists in any category
+    const foundCategory = Object.keys(userCollection).find((cat) =>
+      userCollection[cat].some((b) => b.id === book.id)
+    );
 
-      <div className="book-grid">
-        {books.map((book) => (
-          <BookCard
-            key={book.id}
-            book={book}
-            onAddToCollection={(book, category) => addToCollection(book, category)}
-          />
-        ))}
-      </div>
+    const foundBook =
+      foundCategory &&
+      userCollection[foundCategory].find((b) => b.id === book.id);
+
+    return (
+      <BookCard
+        key={book.id}
+        book={book}
+        onAddToCollection={(book, category) => addToCollection(book, category)}
+        onUpdateRating={updateRating}
+        currentCategory={foundCategory || null}  // ✅ show category if added
+        currentRating={foundBook?.rating || 0}   // ✅ show rating if exists
+      />
+    );
+  })}
+</div>
+
     </div>
   );
 }
