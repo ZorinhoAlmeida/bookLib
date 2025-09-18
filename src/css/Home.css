@@ -2,7 +2,8 @@
 
 /* Container principal da página Home */
 .home {
-  max-width: 1900px; /* largura máxima da página */
+  max-width: 2200px; 
+  height: 2350px;
   margin: 0 auto;
   padding: 2rem;
   display: flex;
@@ -45,9 +46,37 @@
 .book-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 3.5rem;
+  gap: 4rem;
   justify-items: center;
 }
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+  gap: 1rem;
+  color: #000;
+}
+
+.pagination button {
+  padding: 0.5rem 1rem;
+  background: #4a90e2;
+  color: rgb(0, 0, 0);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: #357abd;
+}
+
+.pagination button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
 
 /* Responsividade */
 @media (max-width: 768px) {

@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import "../css/Home.css";
 
 function Home() {
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [books, setBooks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [defaultBooks, setDefaultBooks] = useState([]);
@@ -26,22 +28,26 @@ function Home() {
     localStorage.setItem("userCollection", JSON.stringify(userCollection));
   }, [userCollection]);
 
-  const addToCollection = (book, category) => {
+const addToCollection = (book, category) => {
   setUserCollection((prev) => {
-    // verificar se já existe em alguma categoria
-    const alreadyInAny = Object.values(prev).some((arr) =>
-      arr.some((b) => b.id === book.id)
+    // remove the book from ALL categories first
+    const cleaned = Object.fromEntries(
+      Object.entries(prev).map(([cat, arr]) => [
+        cat,
+        arr.filter((b) => b.id !== book.id),
+      ])
     );
-    if (alreadyInAny) return prev;
 
-    const bookWithMeta = { ...book, category, rating: 0 };
+    // add book into the new category
+    const bookWithMeta = { ...book, category, rating: book.rating || 0 };
 
     return {
-      ...prev,
-      [category]: [...prev[category], bookWithMeta],
+      ...cleaned,
+      [category]: [...cleaned[category], bookWithMeta],
     };
   });
 };
+
 const updateRating = (bookId, category, newRating) => {
   if (!category) return; // se o livro não tem categoria ainda, não faz nada
 
@@ -87,36 +93,54 @@ const updateRating = (bookId, category, newRating) => {
 
   // Live search
   useEffect(() => {
-    if (searchTerm.length < 2) {
-      setBooks(defaultBooks);
-      return;
-    }
+  if (searchTerm.length < 2) {
+    fetchBooks("harry potter", page); // default
+    return;
+  }
 
-    const delayDebounce = setTimeout(() => {
-      fetchBooks(searchTerm);
-    }, 500);
+  const delayDebounce = setTimeout(() => {
+    setPage(1); // reset to first page
+    fetchBooks(searchTerm, 1);
+  }, 500);
 
-    return () => clearTimeout(delayDebounce);
-  }, [searchTerm]);
+  return () => clearTimeout(delayDebounce);
+}, [searchTerm]);
 
-  const fetchBooks = async (query) => {
-    try {
-      const res = await fetch(
-        `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}`
-      );
-      const data = await res.json();
-      const mappedBooks = data.docs.slice(0, 12).map((doc) => ({
-        id: doc.key,
-        title: doc.title,
-        author: doc.author_name?.[0] || "Unknown",
-        release_date: doc.first_publish_year || "N/A",
-        cover_id: doc.cover_i
-      }));
-      setBooks(mappedBooks);
-    } catch (err) {
-      console.error("Erro ao buscar livros:", err);
-    }
-  };
+useEffect(() => {
+  if (searchTerm.length >= 2) {
+    fetchBooks(searchTerm, page);
+  } else {
+    fetchBooks("harry potter", page);
+  }
+}, [page]);
+
+
+
+  const fetchBooks = async (query, pageNumber = 1) => {
+  try {
+    const res = await fetch(
+      `https://openlibrary.org/search.json?q=${encodeURIComponent(query)}&page=${pageNumber}`
+    );
+    const data = await res.json();
+
+    const mappedBooks = data.docs.slice(0, 24).map((doc) => ({
+      id: doc.key,
+      title: doc.title,
+      author: doc.author_name?.[0] || "Unknown",
+      release_date: doc.first_publish_year || "N/A",
+      cover_id: doc.cover_i
+    }));
+
+    setBooks(mappedBooks);
+
+    // OpenLibrary returns numFound (total results)
+    setTotalPages(Math.ceil(data.numFound / 100)); 
+    // API returns 100 per page, but you’re slicing 12 for display
+  } catch (err) {
+    console.error("Erro ao buscar livros:", err);
+  }
+};
+
 
   return (
     <div className="home">
@@ -145,12 +169,30 @@ const updateRating = (bookId, category, newRating) => {
         book={book}
         onAddToCollection={(book, category) => addToCollection(book, category)}
         onUpdateRating={updateRating}
-        currentCategory={foundCategory || null}  // ✅ show category if added
-        currentRating={foundBook?.rating || 0}   // ✅ show rating if exists
+        currentCategory={foundCategory || null}  
+        currentRating={foundBook?.rating || 0}   
       />
     );
   })}
 </div>
+<div className="pagination">
+  <button
+    disabled={page === 1}
+    onClick={() => setPage((prev) => prev - 1)}
+  >
+    Prev
+  </button>
+  <span>
+    Page {page} of {totalPages}
+  </span>
+  <button
+    disabled={page === totalPages}
+    onClick={() => setPage((prev) => prev + 1)}
+  >
+    Next
+  </button>
+</div>
+
 
     </div>
   );
