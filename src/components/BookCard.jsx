@@ -5,6 +5,12 @@ function BookCard({ book, onAddToCollection, onUpdateRating, currentCategory, cu
   const [showList, setShowList] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(currentCategory);
   const selectRef = useRef(null);
+  const categories = [
+  { value: "Reading", label: "Reading" },
+  { value: "Read", label: "Completed" }, // value must match collection key
+  { value: "Dropped", label: "Dropped" },
+  { value: "To read", label: "To read" },
+];
 
   useEffect(() => {
     setSelectedCategory(currentCategory);
@@ -31,6 +37,13 @@ function BookCard({ book, onAddToCollection, onUpdateRating, currentCategory, cu
     }
   };
 
+ const handleCategoryButton = (category) => {
+  if (!onAddToCollection) return;
+  onAddToCollection(book, category);
+  setSelectedCategory(category);
+  setShowList(false);
+};
+
   return (
     <div className="book-card">
       <div className="book-Cover">
@@ -41,28 +54,29 @@ function BookCard({ book, onAddToCollection, onUpdateRating, currentCategory, cu
         <p>{book.author}</p>
         <p>{book.release_date}</p>
       </div>
-      <div className="book-category">
-        {onAddToCollection && (
-          <>
-            <button onClick={() => setShowList(!showList)}>
-              {selectedCategory || "Add to list +"}
-            </button>
-            {showList && (
-              <select
-                ref={selectRef}
-                className="category-list"
-                onChange={handleCategorySelect}
-                defaultValue="Reading" // 👈 pick a sensible default
-              >
-                <option value="Reading">Reading</option>
-                <option value="Read">Completed</option>
-                <option value="Dropped">Dropped</option>
-                <option value="To read">To read</option>
-              </select>
-            )}
-          </>
-        )}
-      </div>
+      <div className="book-category" style={{ position: "relative" }}>
+  {onAddToCollection && (
+    <div className="dropdown">
+  <button 
+    className="dropdown-toggle-btn" 
+    onClick={() => setShowList(!showList)}
+  >
+    {selectedCategory || "Add to list +"}
+  </button>
+
+  {showList && (
+    <div className="dropdown-menu">
+      <button className="dropdown-item" onClick={() => handleCategorySelect({ target: { value: "Reading" } })}>Reading</button>
+      <button className="dropdown-item" onClick={() => handleCategorySelect({ target: { value: "Read" } })}>Completed</button>
+      <button className="dropdown-item" onClick={() => handleCategorySelect({ target: { value: "Dropped" } })}>Dropped</button>
+      <button className="dropdown-item" onClick={() => handleCategorySelect({ target: { value: "To read" } })}>To Read</button>
+    </div>
+  )}
+</div>
+
+  )}
+</div>
+
       <div className="book-rating">
         {[1, 2, 3, 4, 5].map((star) => (
           <span

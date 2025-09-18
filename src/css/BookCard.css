@@ -44,6 +44,10 @@
   text-align: center;
 }
 
+.book-category {
+  position: relative; /* ✅ ensures dropdown stays attached */
+}
+
 /* Botão Add to list */
 .book-category button {
   padding: 0.3rem 0.6rem;
@@ -60,6 +64,34 @@
 .book-category button:hover {
   background-color: #b4c515;
 }
+.dropdown-toggle-btn {
+  padding: 0.4rem 0.8rem;
+  background-color: #2f281e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Dropdown items */
+.dropdown-menu .dropdown-item {
+  padding: 0.3rem 0.6rem;
+  margin: 0; /* remove extra gap */
+  text-align: left;
+  border: none;
+  background: white; /* ✅ force override */
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #1e1e2f;
+  width: 100%;
+}
+
+/* Hover effect */
+.dropdown-menu .dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+
 
 /* Select de categorias */
 .category-list {

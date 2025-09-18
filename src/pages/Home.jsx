@@ -28,6 +28,8 @@ function Home() {
     localStorage.setItem("userCollection", JSON.stringify(userCollection));
   }, [userCollection]);
 
+// Home.jsx (only the modified functions shown)
+
 const addToCollection = (book, category) => {
   setUserCollection((prev) => {
     // remove the book from ALL categories first
@@ -38,31 +40,44 @@ const addToCollection = (book, category) => {
       ])
     );
 
-    // add book into the new category
-    const bookWithMeta = { ...book, category, rating: book.rating || 0 };
+    // add book into the new category (preserve rating if exists)
+    const existing =
+      Object.values(prev)
+        .flat()
+        .find((b) => b.id === book.id) || {};
 
-    return {
+    const bookWithMeta = { ...book, category, rating: existing.rating ?? 0 };
+
+    const updated = {
       ...cleaned,
-      [category]: [...cleaned[category], bookWithMeta],
+      [category]: [...(cleaned[category] || []), bookWithMeta],
     };
+
+    // Persist immediately so Collection can read it right away
+    localStorage.setItem("userCollection", JSON.stringify(updated));
+    return updated;
   });
 };
 
 const updateRating = (bookId, category, newRating) => {
-  if (!category) return; // se o livro não tem categoria ainda, não faz nada
+  if (!category) return; // nothing to do
 
   setUserCollection((prev) => {
-    // caso a categoria não exista, inicializa como []
-    const updatedCategory = prev[category] ? prev[category].map((b) =>
-      b.id === bookId ? { ...b, rating: newRating } : b
-    ) : [];
+    const updatedCategory = prev[category]
+      ? prev[category].map((b) => (b.id === bookId ? { ...b, rating: newRating } : b))
+      : [];
 
-    return {
+    const updated = {
       ...prev,
       [category]: updatedCategory,
     };
+
+    // Persist immediately
+    localStorage.setItem("userCollection", JSON.stringify(updated));
+    return updated;
   });
 };
+
 
 
 

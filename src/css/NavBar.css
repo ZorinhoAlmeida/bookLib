@@ -61,6 +61,34 @@
   color: #ffb400; /* example highlight color */
 }
 
+/* BookCard.css */
+.category-list-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+  background: white;
+  border: 1px solid #ddd;
+  padding: 0.4rem;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+}
+
+.category-option {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.category-option:hover {
+  background: #f5f7fb;
+}
+
+
+
 /* Optional: responsive for small screens */
 @media (max-width: 768px) {
   .navbar {
